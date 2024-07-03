@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ollama
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: ollama-secrets
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+spec:
+  selector:
+    matchLabels:
+      name: ollama
+  template:
+    metadata:
+      labels:
+        name: ollama
+    spec:
+      containers:
+      - name: ollama
+        image: ollama/ollama:latest
+        resources:
+          limits:
+            cpu: "1.0"
+            memory: "2024Mi"
+          requests:
+            cpu: "1.0"
+            memory: "2024Mi"
+        ports:
+        - name: http
+          containerPort: 11434
+          protocol: TCP
